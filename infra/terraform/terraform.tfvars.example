@@ -1,0 +1,14 @@
+aws_region         = "ap-southeast-1"
+telegram_bot_token = "REPLACE_ME"
+telegram_chat_id   = "REPLACE_ME"
+
+# Optional overrides
+# lambda_zip_path      = "../../lambda.zip"
+# lambda_function_name = "rain-radar-worker"
+# table_name           = "rain_alert_state"
+# user_id              = "me"
+# schedule_expression  = "cron(0/5 0-14,23 ? * * *)" # 07:00-22:55 SGT
+# tags = {
+#   Project = "rain-radar"
+#   Env     = "prod"
+# }

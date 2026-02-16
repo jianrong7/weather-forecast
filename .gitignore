@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+.DS_Store
+build/
+lambda.zip
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+
+artifacts/
+radar_snapshots/
