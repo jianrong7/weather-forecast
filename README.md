@@ -1,5 +1,11 @@
 # Radar-Only Telegram Rain Alert (Python)
 
+Kinda frustrated with the weather apps not being able to give me good rain forecasts. I find myself relying a lot on https://www.weather.gov.sg/weather-rain-area-50km.
+
+With the help of Codex, I managed to build this on top of AWS Lambda and a light layer of DynamoDB for state management.
+
+The basic idea is that it will look through the latest radar frames from that URL, then score the rain risk for a pinned location, and send Telegram alerts through a bot if there is a risk transition (e.g. from "no rain" to "light rain" or "light rain" to "heavy rain").
+
 Scheduled AWS Lambda polls Singapore radar frames, scores rain risk for one pinned location, and sends Telegram alerts on upward risk transitions.
 
 ## Stack
@@ -35,8 +41,6 @@ python -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
 ## Lambda deploy
-
-Use the single Terraform module in `/Users/jianrong/Developer/agents/websockets-whiteboard/weather-forecast/infra/terraform`.
 
 From repo root:
 
