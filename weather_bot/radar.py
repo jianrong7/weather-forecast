@@ -166,28 +166,6 @@ def sample_average_intensity(image, x: float, y: float, radius: int) -> float:
     return (total / count) if count else 0.0
 
 
-def sample_annulus_intensity(image, x: float, y: float, inner_radius: int, outer_radius: int) -> float:
-    width, height = image.width, image.height
-    total = 0.0
-    count = 0
-
-    inner_sq = inner_radius * inner_radius
-    outer_sq = outer_radius * outer_radius
-
-    for dy in range(-outer_radius, outer_radius + 1):
-        for dx in range(-outer_radius, outer_radius + 1):
-            dist_sq = dx * dx + dy * dy
-            if dist_sq < inner_sq or dist_sq > outer_sq:
-                continue
-            px = int(_clamp(round(x + dx), 0, width - 1))
-            py = int(_clamp(round(y + dy), 0, height - 1))
-            r, g, b, a = image.pixel(px, py)
-            total += pixel_to_intensity(r, g, b, a)
-            count += 1
-
-    return (total / count) if count else 0.0
-
-
 def lat_lng_to_pixel(lat: float, lng: float, image_width: int, image_height: int, bounds: dict[str, float]) -> tuple[float, float]:
     x_fraction = (lng - bounds["min_lng"]) / (bounds["max_lng"] - bounds["min_lng"])
     y_fraction = (bounds["max_lat"] - lat) / (bounds["max_lat"] - bounds["min_lat"])

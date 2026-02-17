@@ -3,6 +3,10 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 @dataclass(frozen=True)
 class Config:
@@ -13,12 +17,12 @@ class Config:
     poll_interval_minutes: int
     quiet_start: str
     quiet_end: str
-    medium_threshold: int
-    high_threshold: int
     sample_radius: int
-    ring_inner_radius: int
-    ring_outer_radius: int
     frame_count: int
+    history_window_minutes: int
+    motion_search_radius: int
+    nearby_distance_px: int
+    rain_now_intensity_threshold: float
     radar_base_url: str
     radar_prefix: str
     radar_suffix: str
@@ -55,12 +59,14 @@ def load_config(require_telegram_token: bool = True) -> Config:
         poll_interval_minutes=int(_get_number("POLL_INTERVAL_MINUTES", 5, int)),
         quiet_start=os.getenv("QUIET_START", "23:00"),
         quiet_end=os.getenv("QUIET_END", "07:00"),
-        medium_threshold=int(_get_number("MEDIUM_THRESHOLD", 45, int)),
-        high_threshold=int(_get_number("HIGH_THRESHOLD", 70, int)),
         sample_radius=int(_get_number("SAMPLE_RADIUS", 4, int)),
-        ring_inner_radius=int(_get_number("RING_INNER_RADIUS", 8, int)),
-        ring_outer_radius=int(_get_number("RING_OUTER_RADIUS", 24, int)),
         frame_count=int(_get_number("FRAME_COUNT", 7, int)),
+        history_window_minutes=int(_get_number("HISTORY_WINDOW_MINUTES", 30, int)),
+        motion_search_radius=int(_get_number("MOTION_SEARCH_RADIUS", 80, int)),
+        nearby_distance_px=int(_get_number("NEARBY_DISTANCE_PX", 25, int)),
+        rain_now_intensity_threshold=float(
+            _get_number("RAIN_NOW_INTENSITY_THRESHOLD", 0.8, float)
+        ),
         radar_base_url=os.getenv(
             "RADAR_BASE_URL", "https://www.weather.gov.sg/files/rainarea/50km/v2"
         ),
@@ -80,7 +86,13 @@ def load_config(require_telegram_token: bool = True) -> Config:
     ):
         raise ValueError("Invalid radar bounds")
 
-    if config.medium_threshold >= config.high_threshold:
-        raise ValueError("MEDIUM_THRESHOLD must be lower than HIGH_THRESHOLD")
+    if config.history_window_minutes <= 0:
+        raise ValueError("HISTORY_WINDOW_MINUTES must be positive")
+    if config.motion_search_radius <= 0:
+        raise ValueError("MOTION_SEARCH_RADIUS must be positive")
+    if config.nearby_distance_px <= 0:
+        raise ValueError("NEARBY_DISTANCE_PX must be positive")
+    if config.rain_now_intensity_threshold < 0:
+        raise ValueError("RAIN_NOW_INTENSITY_THRESHOLD must be >= 0")
 
     return config
